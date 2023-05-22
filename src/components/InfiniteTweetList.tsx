@@ -1,4 +1,6 @@
+import Link from "next/link"
 import InfiniteScroll from "react-infinite-scroll-component"
+import { ProfileImage } from "./ProfileImage"
 
 type Tweet = {
   id: string
@@ -37,18 +39,31 @@ export function InfiniteTweetList(
         hasMore={hasMore}
         loader={"Loading..."}>
           {tweets.map((tweet) => {
-            return <div key={tweet.id}>
-              {tweet.content}
-            </div>
+            return <TweetCard key={tweet.id} {...tweet} />
           })}
       </InfiniteScroll>
     </ul>
+}
 
+const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {dateStyle : "short"})
 
+function TweetCard({id, createdAt, user, content, likeCount, likedByMe}: Tweet) {
+  return <li className="flex gap-4 border-b px-4 py-4">
+    <Link href={`/profile/${user.id}`}>
+      <ProfileImage src={user.image} /> 
+    </Link>
+    <div className="flex flex-grow flex-col"> 
+      <div className="flex gap-1">
+        <Link 
+          href={`/profile/${user.id}`} 
+          className="font-bold outline-none hover:underline focus-visible:underline">
+          {user.name}
+        </Link>
+        <span className="text-gray-500">-</span>
+        <span className="text-gray-500"> {dateTimeFormatter.format(createdAt)} </span>
 
-
-
-    
-    
-    return <h1>Infinite Tweet</h1>
+      </div> 
+      <p className=" whitespace-pre-wrap">{content}</p>
+    </div>
+  </li>
 }
