@@ -23,9 +23,13 @@ type InfiniteTweetListProps = {
   tweets?: Tweet[]
 }
 
-export function InfiniteTweetList(
-  {tweets, isLoading, isError, hasMore, fetchNewTweets}: InfiniteTweetListProps
-  ) {
+export function InfiniteTweetList({
+  tweets, 
+  isLoading, 
+  isError, 
+  hasMore = false, 
+  fetchNewTweets}: InfiniteTweetListProps) 
+  {
     
     if(isLoading) return <h1> Loading ... </h1>
     if(isError) return <h1> Error ... </h1>
@@ -54,7 +58,7 @@ const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {dateStyle : "short
 function TweetCard({id, createdAt, user, content, likeCount, likedByMe}: Tweet) {
   const trpcUtils = api.useContext()
   const toggleLike = api.tweet.toggleLike.useMutation({onSuccess:
-    async ({addedLike}) => {
+    ({addedLike}) => {
       const updateData: Parameters <typeof trpcUtils.tweet
         .infiniteFeed.setInfiniteData>[1] = (oldData) => {
           if(oldData == null) return;
@@ -80,7 +84,7 @@ function TweetCard({id, createdAt, user, content, likeCount, likedByMe}: Tweet) 
           })};
       }
 
-      await trpcUtils.tweet.infiniteFeed.setInfiniteData({}, updateData);
+      trpcUtils.tweet.infiniteFeed.setInfiniteData({}, updateData);
     }
   });
 
